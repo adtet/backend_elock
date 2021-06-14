@@ -111,6 +111,11 @@ def lokasi_update():
                 resp = jsonify(result)
                 return resp, 200
 
+@app.route('/elock/welcome',methods=['GET'])
+def welcome():
+    result = {"message":"welcome"}
+    resp = jsonify(result)
+    return resp,200
 
 if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=8001)
