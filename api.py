@@ -23,7 +23,6 @@ def user_input():
             password = json_data['password']
             password = hashlib.sha256(password.encode()).hexdigest()
             jenis_kendaraan = json_data['jenis_kendaraan']
-
             input_user(plat_nomor,nik,nama,password,jenis_kendaraan)
             result = {"message": "Input success"}
             resp = jsonify(result)
@@ -44,14 +43,14 @@ def lokasi_input():
         else:
             plat_nomor = json_data['plat_nomor']
             lat = json_data['lat']
-            long = json_data['long']
+            lng = json_data['long']
             cek = cek_platnomor(plat_nomor)
             if cek==False:
                 result = {"message": "Unregisted Vehicle"}
                 resp = jsonify(result)
                 return resp, 203
             else:
-                input_lokasi(plat_nomor,lat,long)
+                input_lokasi(plat_nomor,lat,lng)
                 result = {"message": "Input success"}
                 resp = jsonify(result)
                 return resp, 200
@@ -118,5 +117,5 @@ def welcome():
     return resp,200
 
 if __name__ == "__main__":
-    # serve(app, host="0.0.0.0", port=8001)
-    app.run(port=8001, debug=True)
+    # serve(app, host="0.0.0.0", port=8005)
+    app.run(port=8005, debug=True)

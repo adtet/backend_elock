@@ -5,7 +5,7 @@ def koneksi_sql():
     db = mysql.connector.connect(host="localhost",
                                  user="root",
                                  password="",
-                                 database="aplikasi")
+                                 database="db_elock")
     return db
 
 def input_user(plat_nomor,nik,nama,password,jenis_kendaraan):
@@ -80,5 +80,3 @@ def cek_plat_nomor_lokasi(plat_nomor):
         return False
     else:
         return True
-
-update_lokasi("-678287","11111","D12345kL")
