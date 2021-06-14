@@ -1,5 +1,8 @@
+from os import curdir
 import mysql.connector
 import json
+
+from mysql.connector import cursor
 
 def koneksi_sql():
     db = mysql.connector.connect(host="localhost",
@@ -80,3 +83,28 @@ def cek_plat_nomor_lokasi(plat_nomor):
         return False
     else:
         return True
+
+def get_lokasi(plat_nomor):
+    db =koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `latitude`, `longitude` FROM `lokasi` WHERE `ID_Kendaraan`=%s",(plat_nomor,))
+        c = cursor.fetchone()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    if c==None:
+        return None
+    else:
+        return c
+    
+def get_plat_nomor_base_nik_and_password(nik,password):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `ID_Kendaraan` FROM `users` WHERE `NIK_KTP`=%s AND `Password`=%s",(nik,password))
+        c = cursor.fetchone()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    return c[0]

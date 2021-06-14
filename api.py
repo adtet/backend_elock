@@ -1,5 +1,5 @@
 from flask import Flask,jsonify,request
-from sqllib import input_user,cek_platnomor,input_lokasi,cek_user,cek_plat_nomor_lokasi,update_lokasi
+from sqllib import input_user,cek_platnomor,input_lokasi,cek_user,cek_plat_nomor_lokasi,update_lokasi,get_lokasi,get_plat_nomor_base_nik_and_password
 import hashlib
 
 app = Flask(__name__)
@@ -76,11 +76,20 @@ def login_user():
             if cek==False:
                 result = {"message": "Unregisted account"}
                 resp = jsonify(result)
-                return resp, 203
+                return resp, 403
             else:
-                result = {"pesan" : " Selamat Datang"}
-                resp= jsonify(result)
-                return resp, 200
+                plat_nomor = get_plat_nomor_base_nik_and_password(nik,password)
+                data = get_lokasi(plat_nomor)
+                if data==None:
+                    result = {"message": "vehicle undetected"}
+                    resp = jsonify(result)
+                    return resp, 203
+                else:
+                    result = {"pesan" : " Selamat Datang",
+                          "Lat":data[0],
+                          "Lng":data[1]}
+                    resp= jsonify(result)
+                    return resp, 200
 
 @app.route('/elock/user/update/lokasi',methods=['POST'])
 def lokasi_update():
