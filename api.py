@@ -91,33 +91,18 @@ def login_user():
                     resp= jsonify(result)
                     return resp, 200
 
-@app.route('/elock/user/update/lokasi',methods=['POST'])
-def lokasi_update():
-    json_data = request.json
-    if json_data== None:
-        result = {"message": "process failed"}
-        resp =jsonify(result)
-        return resp, 400
-
+@app.route('/elock/user/update/lokasi/<lat>/<lng>/<plat_nomor>',methods=['POST'])
+def lokasi_update(lat,lng,plat_nomor):
+    cek = cek_plat_nomor_lokasi(plat_nomor)
+    if cek==False:
+        result = {"message": "Unregisted account"}
+        resp = jsonify(result)
+        return resp, 203
     else:
-        if 'lat' not in json_data or 'long' not in json_data or 'plat_nomor' not in json_data:
-            result = {"message": "error request"}
-            resp = jsonify(result)
-            return resp, 401
-        else:
-            lat = json_data['lat']
-            long = json_data['long']
-            plat_nomor = json_data['plat_nomor']
-            cek = cek_plat_nomor_lokasi(plat_nomor)
-            if cek==False:
-                result = {"message": "Unregisted account"}
-                resp = jsonify(result)
-                return resp, 203
-            else:
-                update_lokasi(lat,long,plat_nomor)
-                result = {"message": "Update success"}
-                resp = jsonify(result)
-                return resp, 200
+        update_lokasi(lat,lng,plat_nomor)
+        result = {"message": "Update success"}
+        resp = jsonify(result)
+        return resp, 200
 
 @app.route('/elock/welcome',methods=['GET'])
 def welcome():
