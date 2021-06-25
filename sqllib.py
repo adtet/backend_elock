@@ -108,3 +108,51 @@ def get_plat_nomor_base_nik_and_password(nik,password):
         print(e)
         c = None
     return c[0]
+
+def input_laporan(plat_nomor,deskripsi,lat,lng):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("INSERT INTO `laporan`( `ID_Kendaraan`, `deskripsi`, `tanggal`, `lat`, `lng`) VALUES (%s,%s,now(),%s,%s)",(plat_nomor,deskripsi,lat,lng))
+        db.commit()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        
+def get_laporan_base_on_plat_nomor(plat_nomor):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `ID_Kendaraan`, `deskripsi`, `tanggal`, `lat`, `lng` FROM `laporan` WHERE `ID_Kendaraan`=%s",(plat_nomor,))
+        rows = [x for x in cursor]  
+        cols = [x[0] for x in cursor.description]
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        rows = []
+        cols = []  
+    datas = []  
+    for row in rows:  
+        data = {}  
+        for prop, val in zip(cols, row):  
+            data[prop] = val  
+        datas.append(data)
+    
+    for i in range(0,len(datas)):
+        datas[i]['tanggal'] = str(datas[i]['tanggal'])
+    
+    datajson = json.dumps(datas)
+    return datajson
+
+def cek_plat_nomor_on_laporan(plat_nomor):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT  `ID_Kendaraan` FROM `laporan` WHERE `ID_Kendaraan`=%s",(plat_nomor,))
+        c = cursor.fetchone()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    if c == None:
+        return False
+    else:
+        return True
+        

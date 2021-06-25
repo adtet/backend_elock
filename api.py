@@ -1,7 +1,8 @@
 from flask import Flask,jsonify,request
 from sqllib import input_user,cek_platnomor,input_lokasi,cek_user,cek_plat_nomor_lokasi,update_lokasi,get_lokasi,get_plat_nomor_base_nik_and_password
+from sqllib import input_laporan,get_laporan_base_on_plat_nomor,cek_plat_nomor_on_laporan
 import hashlib
-
+import json
 app = Flask(__name__)
 
 @app.route('/elock/user/input',methods=['POST'])
@@ -104,6 +105,57 @@ def lokasi_update(lat,lng,plat_nomor):
         resp = jsonify(result)
         return resp, 200
 
+@app.route('/elock/input/laporan',methods=['POST'])
+def laporan_input():
+    json_data = request.json
+    if json_data==None:
+        result = {"message": "process failed"}
+        resp = jsonify(result)
+        return resp, 400
+    else:
+        if 'plat_nomor' not in json_data or 'laporan' not in json_data or 'latitude' not in json_data or 'longitude' not in json_data:
+            result = {"message": "error request"}
+            resp = jsonify(result)
+            return resp, 401
+        else:
+            plat_nomor = json_data['plat_nomor']
+            laporan = json_data['laporan']
+            latitude = json_data['latitude']
+            longitude = json_data['longitude']
+            cek = cek_plat_nomor_lokasi(plat_nomor)
+            if cek == False:
+                result = {"message": "Unregisted vehicle"}
+                resp = jsonify(result)
+                return resp, 403
+            else:
+                input_laporan(plat_nomor,laporan,latitude,longitude)
+                result = {"message": "Input success"}
+                resp = jsonify(result)
+                return resp, 200
+
+@app.route('/elock/get/laporan',methods=['POST'])
+def laporan_show():
+    json_data = request.json
+    if json_data==None:
+        result = []
+        resp = json.dumps(result)
+        return resp, 400
+    else:
+        if 'plat_nomor' not in json_data:
+            result = []
+            resp = json.dumps(result)
+            return resp, 401
+        else:
+            plat_nomor =  json_data['plat_nomor']
+            cek = cek_plat_nomor_on_laporan(plat_nomor)
+            if cek == False:
+                result = []
+                resp = json.dumps(result)
+                return resp, 403
+            else:
+                resp = get_laporan_base_on_plat_nomor(plat_nomor)
+                return resp,200
+                
 @app.route('/elock/welcome',methods=['GET'])
 def welcome():
     result = {"message":"welcome"}
