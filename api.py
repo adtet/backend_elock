@@ -88,7 +88,8 @@ def login_user():
                 else:
                     result = {"pesan" : " Selamat Datang",
                           "Lat":data[0],
-                          "Lng":data[1]}
+                          "Lng":data[1],
+                          "plat_nomor":plat_nomor}
                     resp= jsonify(result)
                     return resp, 200
 

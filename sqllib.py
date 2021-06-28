@@ -122,7 +122,7 @@ def get_laporan_base_on_plat_nomor(plat_nomor):
     db = koneksi_sql()
     cursor = db.cursor()
     try:
-        cursor.execute("SELECT `ID_Kendaraan`, `deskripsi`, `tanggal`, `lat`, `lng` FROM `laporan` WHERE `ID_Kendaraan`=%s",(plat_nomor,))
+        cursor.execute("SELECT laporan.`ID_Kendaraan`, laporan.`deskripsi`, laporan.`tanggal`, laporan.`lat`, laporan.`lng`,users.Nama,users.Jenis_Kendaraan FROM `laporan` JOIN users ON users.ID_Kendaraan = laporan.ID_Kendaraan WHERE laporan.`ID_Kendaraan`=%s",(plat_nomor,))
         rows = [x for x in cursor]  
         cols = [x[0] for x in cursor.description]
     except(mysql.connector.Error,mysql.connector.Warning) as e:
@@ -155,4 +155,3 @@ def cek_plat_nomor_on_laporan(plat_nomor):
         return False
     else:
         return True
-        
